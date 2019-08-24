@@ -7,6 +7,23 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 
+const mongoose = require("mongoose");
+
+mongoose.connect("mongodb://127.0.0.1/test", { useNewUrlParser: true });
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+
+db.once("open", async function() {
+  console.log("database mounted");
+
+  let complaintsSchema = new mongoose.Schema({
+    body: String,
+    deviceId: String,
+    upVoteId: String
+  });
+});
+
 var app = express();
 
 // view engine setup
@@ -38,4 +55,4 @@ app.use(function(err, req, res, next) {
   res.render("error");
 });
 
-module.exports = app;
+module.exports = { app, db };

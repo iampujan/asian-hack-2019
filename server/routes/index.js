@@ -3,6 +3,8 @@ var router = express.Router();
 
 const { fetchUniLocData, dailyData, locationData } = require("../location");
 
+const { doDatabase } = require("../data/complaints");
+
 /* GET home page. */
 router.get("/", function(req, res, next) {
   res.render("index", { title: "Express" });
@@ -20,4 +22,8 @@ router.get("/locations", locationData, (req, res, next) => {
   res.json(data);
 });
 
+router.post("/subscribe", doDatabase, (req, res, next) => {
+  res.write("sfsd");
+  console.log("asdlfd");
+});
 module.exports = router;
