@@ -33,8 +33,12 @@ export const fetchRealtimeData = async callback => {
     .catch(err => {
       console.log('error fetching station pm data', err);
     });
-  console.log(response);
-  if (response.status === 200 && response.data.length > 0) {
+  if (
+    response &&
+    response.status === 200 &&
+    response.data &&
+    response.data.length > 0
+  ) {
     callback(response.data);
   }
 };

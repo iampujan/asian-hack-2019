@@ -1,6 +1,41 @@
 import React, {Component} from 'react';
 import {Text, View, StyleSheet, ScrollView} from 'react-native';
 
+import {getAqiColor} from '../utils/common';
+
+const sampleAqiScheme = [
+  {
+    name: 'Good',
+    value: 1,
+    range: '0 - 50',
+  },
+  {
+    name: 'Moderate',
+    value: 51,
+    range: '51 - 100',
+  },
+  {
+    name: 'Unhealthy for sensitive groups',
+    value: 101,
+    range: '101 - 150',
+  },
+  {
+    name: 'Unhealthy',
+    value: 151,
+    range: '151 - 200',
+  },
+  {
+    name: 'Very unhealthy',
+    value: 201,
+    range: '201 - 300',
+  },
+  {
+    name: 'Hazardous',
+    value: 301,
+    range: '301 - 500',
+  },
+];
+
 class Knowledge extends Component {
   render() {
     return (
@@ -17,6 +52,31 @@ class Knowledge extends Component {
             micrometer which are really harmful to the human body.
           </Text>
         </View>
+
+        <View style={styles.cardContainer}>
+          <Text style={styles.cardTitleText}>
+            Air Quality Index (AQI) color scheme
+          </Text>
+          <View style={{padding: 10}}>
+            {sampleAqiScheme.map(sample => (
+              <View
+                style={[
+                  styles.rowContainer,
+                  {
+                    backgroundColor: getAqiColor(sample.value),
+                  },
+                ]}>
+                <Text style={{color: '#fff'}}>{sample.name}</Text>
+                <View style={{flexDirection: 'row'}}>
+                  <Text style={{color: '#fff', fontWeight: '700'}}>
+                    {sample.range}
+                  </Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+
         <View style={styles.cardContainer}>
           <Text style={styles.cardTitleText}>
             Ways To Mitigate Air Pollution :
@@ -91,6 +151,14 @@ const styles = StyleSheet.create({
   cardTitleText: {
     fontSize: 18,
     fontWeight: '700',
+  },
+  rowContainer: {
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+    padding: 10,
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 
