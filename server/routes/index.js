@@ -5,6 +5,10 @@ const { fetchUniLocData, dailyData, locationData } = require('../location');
 
 const { saveComplaints } = require('../data/database/complaints');
 const { saveDevice } = require('../data/database/device');
+const {
+  subscribeDevice,
+  unsubscribeDevice
+} = require('../data/database/subscribe');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -23,7 +27,7 @@ router.get('/locations', locationData, (req, res, next) => {
   res.json(data);
 });
 
-router.post('/subscribe', async (req, res) => {
+router.post('/complaint', async (req, res) => {
   const { deviceId, body } = req.body;
   const saveResp = await saveComplaints({
     deviceId,
@@ -40,4 +44,23 @@ router.post('/device', async (req, res) => {
   });
   res.send(saveResp);
 });
+
+router.post('/subscribe', async (req, res) => {
+  const { deviceId, station } = req.body;
+  const saveResp = await subscribeDevice({
+    deviceId,
+    station
+  });
+  res.send(saveResp);
+});
+
+router.post('/unsubscribe', async (req, res) => {
+  const { deviceId, station } = req.body;
+  const saveResp = await unsubscribeDevice({
+    deviceId,
+    station
+  });
+  res.send(saveResp);
+});
+
 module.exports = router;
