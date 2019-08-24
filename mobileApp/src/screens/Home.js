@@ -15,9 +15,10 @@ import {
   registerDevice,
   updateSubscribedStations,
   updateStations,
+  updateRealtimeData,
 } from '../actions';
 
-import {fetchStationsData} from '../utils/makeRequest';
+import {fetchStationsData, fetchRealtimeData} from '../utils/makeRequest';
 
 class Home extends Component {
   componentDidMount() {
@@ -30,10 +31,15 @@ class Home extends Component {
     if (insight.stations.length === 0) {
       fetchStationsData(this.updateStationsData);
     }
+    fetchRealtimeData(this.updateRealtimeData);
   }
 
   updateStationsData = stations => {
     this.props.updateStations(stations);
+  };
+
+  updateRealtimeData = realtimeData => {
+    this.props.updateRealtimeData(realtimeData);
   };
 
   getAqiColor = aqiValue => {
@@ -195,5 +201,6 @@ export default connect(
     registerDevice,
     updateSubscribedStations,
     updateStations,
+    updateRealtimeData,
   },
 )(Home);

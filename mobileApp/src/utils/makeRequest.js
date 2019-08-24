@@ -15,7 +15,6 @@ export const fetchStationsData = async callback => {
 };
 
 export const fetchStationPMData = async (location, callback) => {
-  console.log('making request');
   const response = await axios
     .get(`${SERVER_URL}/daily?location=${location}`)
     .then(resp => resp)
@@ -24,5 +23,18 @@ export const fetchStationPMData = async (location, callback) => {
     });
   if (response.status === 200 && response.data.length > 0) {
     callback(location, response.data);
+  }
+};
+
+export const fetchRealtimeData = async callback => {
+  const response = await axios
+    .get(`${SERVER_URL}/pollution/fetch`)
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error fetching station pm data', err);
+    });
+  console.log(response);
+  if (response.status === 200 && response.data.length > 0) {
+    callback(response.data);
   }
 };
