@@ -11,16 +11,30 @@ import {connect} from 'react-redux';
 import DeviceInfo from 'react-native-device-info';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import {registerDevice, updateSubscribedStations} from '../actions';
+import {
+  registerDevice,
+  updateSubscribedStations,
+  updateStations,
+} from '../actions';
+
+import {fetchStationsData} from '../utils/makeRequest';
 
 class Home extends Component {
   componentDidMount() {
+    const {insight, registerDevice} = this.props;
     const deviceId = DeviceInfo.getUniqueID();
-    this.props.registerDevice({
+    registerDevice({
       deviceId,
       fcmToken: 'data',
     });
+    if (insight.stations.length === 0) {
+      fetchStationsData(this.updateStationsData);
+    }
   }
+
+  updateStationsData = stations => {
+    this.props.updateStations(stations);
+  };
 
   getAqiColor = aqiValue => {
     let aqiColor = '';
@@ -112,6 +126,7 @@ class Home extends Component {
   render() {
     const {
       aqi: {realtime, subscribedStations},
+      insight: {stations},
     } = this.props;
     return (
       <ScrollView style={{flex: 1}}>
@@ -170,6 +185,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => {
   return {
     aqi: state.aqi,
+    insight: state.insight,
   };
 };
 
@@ -178,5 +194,6 @@ export default connect(
   {
     registerDevice,
     updateSubscribedStations,
+    updateStations,
   },
 )(Home);
