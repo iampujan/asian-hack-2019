@@ -1,4 +1,4 @@
-import {SUBSCRIBE_STATION} from './types';
+import {SUBSCRIBE_STATION, UPDATE_REALTIME_DATA} from './types';
 
 const initialState = {
   realtime: [
@@ -43,6 +43,11 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
+    case UPDATE_REALTIME_DATA:
+      return {
+        ...state,
+        realtime: action.payload,
+      };
     case SUBSCRIBE_STATION:
       return {
         ...state,
