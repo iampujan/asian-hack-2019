@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {Text, View, Button, Picker, ActivityIndicator} from 'react-native';
+import {
+  Text,
+  View,
+  Picker,
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+} from 'react-native';
 import {LineChart, Grid, YAxis, XAxis} from 'react-native-svg-charts';
 import {connect} from 'react-redux';
 
@@ -55,69 +62,85 @@ class Insight extends Component {
     } = this.props;
     const {selectedStation} = this.state;
     const contentInset = {top: 20, bottom: 20};
-    const data = {
-      1: [50, 10, 40, 95, 85],
-      2: [10, 20, 10, 55, 65],
-      3: [56, 89, 23, 43, 89],
-    };
     if (stations.length === 0 || selectedStation === null) {
       return <ActivityIndicator size="large" />;
     }
     const selectedStationLineData = stationsPmData[selectedStation];
-    console.log(selectedStationLineData);
     return (
-      <View style={{padding: 10}}>
-        <View style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>
-          <Text>Select station</Text>
-          <Picker
-            selectedValue={selectedStation}
-            style={{
-              height: 50,
-              width: '100%',
-            }}
-            onValueChange={this.changeData}>
-            {stations.map(station => (
-              <Picker.Item label={station} value={station} key={station} />
-            ))}
-          </Picker>
+      <ScrollView>
+        <View style={[styles.rowContainer]}>
+          <Text style={{fontWeight: '600', fontSize: 18}}>
+            Daily Stations PM2.5 Chart
+          </Text>
         </View>
-        {selectedStationLineData ? (
-          <View style={{height: 200, flexDirection: 'row'}}>
-            <YAxis
-              data={this.mapDataToLineChart(selectedStationLineData, 'value')}
-              contentInset={contentInset}
-              svg={{
-                fill: 'grey',
-                fontSize: 10,
+        <View style={{padding: 10}}>
+          <View style={{borderBottomColor: '#ddd', borderBottomWidth: 1}}>
+            <Text>Select station</Text>
+            <Picker
+              selectedValue={selectedStation}
+              style={{
+                height: 50,
+                width: '100%',
               }}
-              numberOfTicks={10}
-            />
-            <LineChart
-              style={{flex: 1, marginLeft: 16}}
-              data={this.mapDataToLineChart(selectedStationLineData, 'value')}
-              svg={{stroke: 'rgb(134, 65, 244)'}}
-              contentInset={{top: 20, bottom: 20}}>
-              <Grid />
-            </LineChart>
-            <XAxis
-              style={{marginHorizontal: -10}}
-              data={this.mapDataToLineChart(selectedStationLineData, 'value')}
-              formatLabel={(value, index) => {
-                return `${index}\n`;
-              }}
-              contentInset={{left: 115, right: -37}}
-              svg={{fill: 'red', fontSize: 10, rotation: 20, originY: 30, y: 5}}
-            />
+              onValueChange={this.changeData}>
+              {stations.map(station => (
+                <Picker.Item label={station} value={station} key={station} />
+              ))}
+            </Picker>
           </View>
-        ) : (
-          <View style={{height: 200, justifyContent: 'center'}}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
-      </View>
+          {selectedStationLineData ? (
+            <View style={{height: 200, flexDirection: 'row'}}>
+              <YAxis
+                data={this.mapDataToLineChart(selectedStationLineData, 'value')}
+                contentInset={contentInset}
+                svg={{
+                  fill: 'grey',
+                  fontSize: 10,
+                }}
+                numberOfTicks={10}
+              />
+              <LineChart
+                style={{flex: 1, marginLeft: 16}}
+                data={this.mapDataToLineChart(selectedStationLineData, 'value')}
+                svg={{stroke: 'rgb(134, 65, 244)'}}
+                contentInset={{top: 20, bottom: 20}}>
+                <Grid />
+              </LineChart>
+              <XAxis
+                style={{marginHorizontal: -10}}
+                data={this.mapDataToLineChart(selectedStationLineData, 'value')}
+                formatLabel={(value, index) => {
+                  return `${index}\n`;
+                }}
+                contentInset={{left: 115, right: -37}}
+                svg={{
+                  fill: 'red',
+                  fontSize: 10,
+                  rotation: 20,
+                  originY: 30,
+                  y: 5,
+                }}
+              />
+            </View>
+          ) : (
+            <View style={{height: 200, justifyContent: 'center'}}>
+              <ActivityIndicator size="large" />
+            </View>
+          )}
+        </View>
+      </ScrollView>
     );
   }
 }
+
+const styles = StyleSheet.create({
+  rowContainer: {
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1,
+    padding: 10,
+    flex: 1,
+  },
+});
 
 const mapStateToProps = state => {
   return {

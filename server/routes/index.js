@@ -3,7 +3,10 @@ var router = express.Router();
 
 const { fetchUniLocData, dailyData, locationData } = require('../location');
 
-const { saveComplaints } = require('../data/database/complaints');
+const {
+  saveComplaints,
+  fetchComplaints
+} = require('../data/database/complaints');
 const { saveDevice } = require('../data/database/device');
 const {
   subscribeDevice,
@@ -27,14 +30,19 @@ router.get('/locations', locationData, (req, res, next) => {
   res.json(data);
 });
 
-router.post('/complaint', async (req, res) => {
-  const { deviceId, body } = req.body;
-  const saveResp = await saveComplaints({
-    deviceId,
-    body
+router
+  .post('/complaint', async (req, res) => {
+    const { deviceId, body } = req.body;
+    const saveResp = await saveComplaints({
+      deviceId,
+      body
+    });
+    res.send(saveResp);
+  })
+  .get('/complaint', async (req, res) => {
+    const complaints = await fetchComplaints();
+    res.send(complaints);
   });
-  res.send(saveResp);
-});
 
 router.post('/device', async (req, res) => {
   const { deviceId, fcmToken } = req.body;

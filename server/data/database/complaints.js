@@ -12,4 +12,9 @@ const saveComplaints = async complaintData => {
   return resp;
 };
 
-module.exports = { saveComplaints };
+const fetchComplaints = async () => {
+  const complaints = await Complaints.find({});
+  return complaints;
+};
+
+module.exports = { saveComplaints, fetchComplaints };

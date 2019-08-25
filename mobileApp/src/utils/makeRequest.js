@@ -81,3 +81,31 @@ export const unsubscribeToStation = subscriptionData => {
       console.log('error while unsubscribing', err);
     });
 };
+
+export const submitComplaint = async (complaint, callback) => {
+  const response = await axios({
+    method: 'POST',
+    url: `${SERVER_URL}/complaint`,
+    contentType: 'application/json',
+    data: complaint,
+  })
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error while submitting complaint', err);
+    });
+  if (response.status === 200) {
+    callback(response.data);
+  }
+};
+
+export const fetchComplaints = async callback => {
+  const response = await axios
+    .get(`${SERVER_URL}/complaint`)
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error fetching complaints', err);
+    });
+  if (response.status === 200 && response.data.length > 0) {
+    callback(response.data);
+  }
+};
