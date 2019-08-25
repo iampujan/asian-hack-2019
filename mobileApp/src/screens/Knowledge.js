@@ -60,6 +60,7 @@ class Knowledge extends Component {
           <View style={{padding: 10}}>
             {sampleAqiScheme.map(sample => (
               <View
+                key={sample.value}
                 style={[
                   styles.rowContainer,
                   {

@@ -18,7 +18,13 @@ import {
   updateRealtimeData,
 } from '../actions';
 
-import {fetchStationsData, fetchRealtimeData} from '../utils/makeRequest';
+import {
+  fetchStationsData,
+  fetchRealtimeData,
+  saveDeviceData,
+  subscribeToStation,
+  unsubscribeToStation,
+} from '../utils/makeRequest';
 import {getAqiColor} from '../utils/common';
 
 class Home extends Component {
@@ -26,6 +32,10 @@ class Home extends Component {
     const {insight, registerDevice} = this.props;
     const deviceId = DeviceInfo.getUniqueID();
     registerDevice({
+      deviceId,
+      fcmToken: 'data',
+    });
+    saveDeviceData({
       deviceId,
       fcmToken: 'data',
     });
@@ -63,10 +73,15 @@ class Home extends Component {
     const {
       updateSubscribedStations,
       aqi: {subscribedStations},
+      device: {deviceId},
     } = this.props;
     if (subscribedStations.indexOf(station) === -1) {
       const updatedSubscribedStations = [...subscribedStations, station];
       updateSubscribedStations(updatedSubscribedStations);
+      subscribeToStation({
+        deviceId,
+        station,
+      });
     }
   };
 
@@ -90,12 +105,17 @@ class Home extends Component {
     const {
       updateSubscribedStations,
       aqi: {subscribedStations},
+      device: {deviceId},
     } = this.props;
     if (subscribedStations.indexOf(station) > -1) {
       const updatedSubscribedStations = subscribedStations.filter(
         st => st !== station,
       );
       updateSubscribedStations(updatedSubscribedStations);
+      unsubscribeToStation({
+        deviceId,
+        station,
+      });
     }
   };
 
@@ -109,8 +129,7 @@ class Home extends Component {
 
   render() {
     const {
-      aqi: {realtime, subscribedStations},
-      insight: {stations},
+      aqi: {realtime},
     } = this.props;
     return (
       <ScrollView style={{flex: 1}}>
@@ -170,6 +189,7 @@ const mapStateToProps = state => {
   return {
     aqi: state.aqi,
     insight: state.insight,
+    device: state.device,
   };
 };
 

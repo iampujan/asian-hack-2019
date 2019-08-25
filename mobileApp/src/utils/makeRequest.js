@@ -42,3 +42,42 @@ export const fetchRealtimeData = async callback => {
     callback(response.data);
   }
 };
+
+export const saveDeviceData = deviceData => {
+  axios({
+    method: 'POST',
+    url: `${SERVER_URL}/device`,
+    contentType: 'application/json',
+    data: deviceData,
+  })
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error saving device data', err);
+    });
+};
+
+export const subscribeToStation = subscriptionData => {
+  axios({
+    method: 'POST',
+    url: `${SERVER_URL}/subscribe`,
+    contentType: 'application/json',
+    data: subscriptionData,
+  })
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error while subscribing', err);
+    });
+};
+
+export const unsubscribeToStation = subscriptionData => {
+  axios({
+    method: 'POST',
+    url: `${SERVER_URL}/unsubscribe`,
+    contentType: 'application/json',
+    data: subscriptionData,
+  })
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error while unsubscribing', err);
+    });
+};
