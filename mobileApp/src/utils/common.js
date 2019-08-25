@@ -22,8 +22,11 @@ export const getAqiColor = aqiValue => {
 };
 
 export const separateNameForDisplay = name => {
-  return name.split('-').map(n => {
-    n = n[0].toUpperCase() + n.slice(1);
-    return n;
-  });
+  return name
+    .split('-')
+    .map(n => {
+      n = n[0].toUpperCase() + n.slice(1);
+      return n;
+    })
+    .join(' ');
 };
