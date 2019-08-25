@@ -7,11 +7,12 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import {LineChart, Grid, YAxis, BarChart, XAxis} from 'react-native-svg-charts';
+import {LineChart, Grid, YAxis} from 'react-native-svg-charts';
 import {connect} from 'react-redux';
 
 import {fetchStationPMData, fetchAllLocationPmData} from '../utils/makeRequest';
 import {updateStationPMData, updateInsightBarChartData} from '../actions';
+import {getAqiColor, separateNameForDisplay} from '../utils/common';
 
 class Insight extends Component {
   state = {
@@ -65,6 +66,7 @@ class Insight extends Component {
 
   updateStationsPmData = (station, pmData) => {
     this.props.updateStationPMData(station, pmData);
+    this.setState({selectedStation: station});
   };
 
   render() {
@@ -116,24 +118,6 @@ class Insight extends Component {
                 svg={{stroke: 'rgb(134, 65, 244)'}}
                 contentInset={{top: 20, bottom: 20}}>
                 <Grid />
-                {/* <XAxis
-                  style={{marginHorizontal: -10}}
-                  data={this.mapDataToLineChart(
-                    selectedStationLineData,
-                    'value',
-                  )}
-                  formatLabel={(value, index) => {
-                    return `${index}\n`;
-                  }}
-                  contentInset={{left: 115, right: -37}}
-                  svg={{
-                    fill: 'red',
-                    fontSize: 10,
-                    rotation: 20,
-                    originY: 30,
-                    y: 5,
-                  }}
-                /> */}
               </LineChart>
             </View>
           ) : (
@@ -153,23 +137,28 @@ class Insight extends Component {
               <ActivityIndicator size="large" />
             </View>
           ) : (
-            <View style={{height: 200}}>
-              <BarChart
-                style={{height: 200, marginLeft: 16, flex: 1}}
-                data={this.mapDataToLineChart(stationsAverageData, 'value')}
-                svg={{fill: 'rgb(134, 65, 244)'}}
-                contentInset={{top: 30, bottom: 30}}>
-                <Grid />
-              </BarChart>
-              <YAxis
-                style={{height: 200, position: 'absolute', left: 0, bottom: 5}}
-                data={this.mapDataToLineChart(stationsAverageData, 'value')}
-                svg={{
-                  fill: 'grey',
-                  fontSize: 10,
-                }}
-                numberOfTicks={8}
-              />
+            <View>
+              {stationsAverageData
+                .sort((a, b) => b.value - a.value)
+                .map(station => (
+                  <View
+                    key={station.location}
+                    style={[
+                      styles.rowContainer,
+                      {
+                        backgroundColor: getAqiColor(station.value),
+                      },
+                    ]}>
+                    <Text style={{color: '#fff'}}>
+                      {separateNameForDisplay(station.location)}
+                    </Text>
+                    <View style={{flexDirection: 'row'}}>
+                      <Text style={{color: '#fff', fontWeight: '700'}}>
+                        {station.value.toFixed(2)} μg/m3
+                      </Text>
+                    </View>
+                  </View>
+                ))}
             </View>
           )}
         </View>
@@ -184,6 +173,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     padding: 10,
     flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 });
 

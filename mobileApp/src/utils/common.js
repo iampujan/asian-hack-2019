@@ -20,3 +20,10 @@ export const getAqiColor = aqiValue => {
   }
   return aqiColor;
 };
+
+export const separateNameForDisplay = name => {
+  return name.split('-').map(n => {
+    n = n[0].toUpperCase() + n.slice(1);
+    return n;
+  });
+};

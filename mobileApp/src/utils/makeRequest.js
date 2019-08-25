@@ -9,7 +9,7 @@ export const fetchStationsData = async callback => {
     .catch(err => {
       console.log('error fetching stations', err);
     });
-  if (response.status === 200 && response.data.length > 0) {
+  if (response && response.status === 200 && response.data.length > 0) {
     callback(response.data);
   }
 };
@@ -21,7 +21,7 @@ export const fetchStationPMData = async (location, callback) => {
     .catch(err => {
       console.log('error fetching station pm data', err);
     });
-  if (response.status === 200 && response.data.length > 0) {
+  if (response && response.status === 200 && response.data.length > 0) {
     callback(location, response.data);
   }
 };
@@ -93,7 +93,7 @@ export const submitComplaint = async (complaint, callback) => {
     .catch(err => {
       console.log('error while submitting complaint', err);
     });
-  if (response.status === 200) {
+  if (response && response.status === 200) {
     callback(response.data);
   }
 };
@@ -105,7 +105,7 @@ export const fetchComplaints = async callback => {
     .catch(err => {
       console.log('error fetching complaints', err);
     });
-  if (response.status === 200 && response.data.length > 0) {
+  if (response && response.status === 200 && response.data.length > 0) {
     callback(response.data);
   }
 };
@@ -117,7 +117,7 @@ export const fetchAllLocationPmData = async callback => {
     .catch(err => {
       console.log('error on /locations', err);
     });
-  if (response.status === 200 && response.data.length > 0) {
+  if (response && response.status === 200 && response.data.length > 0) {
     callback(response.data);
   }
 };
