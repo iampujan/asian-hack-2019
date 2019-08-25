@@ -7,28 +7,39 @@ import {
   ScrollView,
   StyleSheet,
 } from 'react-native';
-import {LineChart, Grid, YAxis, XAxis} from 'react-native-svg-charts';
+import {LineChart, Grid, YAxis, BarChart, XAxis} from 'react-native-svg-charts';
 import {connect} from 'react-redux';
 
-import {fetchStationPMData} from '../utils/makeRequest';
-import {updateStationPMData} from '../actions';
+import {fetchStationPMData, fetchAllLocationPmData} from '../utils/makeRequest';
+import {updateStationPMData, updateInsightBarChartData} from '../actions';
 
 class Insight extends Component {
   state = {
     dataset: 1,
     selectedStation: null,
+    loadingBarChartData: false,
   };
 
   componentDidMount() {
     const {
-      insight: {stations},
+      insight: {stations, stationsAverageData},
     } = this.props;
     if (stations && stations.length > 0) {
       this.setState({selectedStation: stations[0]}, () => {
         this.fetchStationsPmData();
       });
     }
+    if (stationsAverageData.length === 0) {
+      this.setState({loadingBarChartData: true}, () => {
+        fetchAllLocationPmData(this.updateBarChartData);
+      });
+    }
   }
+
+  updateBarChartData = data => {
+    this.props.updateInsightBarChartData(data);
+    this.setState({loadingBarChartData: false});
+  };
 
   changeData = value => {
     this.setState({selectedStation: value}, () => {
@@ -58,9 +69,9 @@ class Insight extends Component {
 
   render() {
     const {
-      insight: {stations, stationsPmData},
+      insight: {stations, stationsPmData, stationsAverageData},
     } = this.props;
-    const {selectedStation} = this.state;
+    const {selectedStation, loadingBarChartData} = this.state;
     const contentInset = {top: 20, bottom: 20};
     if (stations.length === 0 || selectedStation === null) {
       return <ActivityIndicator size="large" />;
@@ -70,7 +81,7 @@ class Insight extends Component {
       <ScrollView>
         <View style={[styles.rowContainer]}>
           <Text style={{fontWeight: '600', fontSize: 18}}>
-            Daily Stations PM2.5 Chart
+            Single station PM2.5 line chart
           </Text>
         </View>
         <View style={{padding: 10}}>
@@ -97,7 +108,7 @@ class Insight extends Component {
                   fill: 'grey',
                   fontSize: 10,
                 }}
-                numberOfTicks={10}
+                numberOfTicks={8}
               />
               <LineChart
                 style={{flex: 1, marginLeft: 16}}
@@ -105,26 +116,60 @@ class Insight extends Component {
                 svg={{stroke: 'rgb(134, 65, 244)'}}
                 contentInset={{top: 20, bottom: 20}}>
                 <Grid />
+                {/* <XAxis
+                  style={{marginHorizontal: -10}}
+                  data={this.mapDataToLineChart(
+                    selectedStationLineData,
+                    'value',
+                  )}
+                  formatLabel={(value, index) => {
+                    return `${index}\n`;
+                  }}
+                  contentInset={{left: 115, right: -37}}
+                  svg={{
+                    fill: 'red',
+                    fontSize: 10,
+                    rotation: 20,
+                    originY: 30,
+                    y: 5,
+                  }}
+                /> */}
               </LineChart>
-              <XAxis
-                style={{marginHorizontal: -10}}
-                data={this.mapDataToLineChart(selectedStationLineData, 'value')}
-                formatLabel={(value, index) => {
-                  return `${index}\n`;
-                }}
-                contentInset={{left: 115, right: -37}}
-                svg={{
-                  fill: 'red',
-                  fontSize: 10,
-                  rotation: 20,
-                  originY: 30,
-                  y: 5,
-                }}
-              />
             </View>
           ) : (
             <View style={{height: 200, justifyContent: 'center'}}>
               <ActivityIndicator size="large" />
+            </View>
+          )}
+        </View>
+        <View style={[styles.rowContainer]}>
+          <Text style={{fontWeight: '600', fontSize: 18}}>
+            Stations PM2.5 bar chart
+          </Text>
+        </View>
+        <View style={{padding: 10}}>
+          {loadingBarChartData || stationsAverageData.length === 0 ? (
+            <View style={{height: 200, justifyContent: 'center'}}>
+              <ActivityIndicator size="large" />
+            </View>
+          ) : (
+            <View style={{height: 200}}>
+              <BarChart
+                style={{height: 200, marginLeft: 16, flex: 1}}
+                data={this.mapDataToLineChart(stationsAverageData, 'value')}
+                svg={{fill: 'rgb(134, 65, 244)'}}
+                contentInset={{top: 30, bottom: 30}}>
+                <Grid />
+              </BarChart>
+              <YAxis
+                style={{height: 200, position: 'absolute', left: 0, bottom: 5}}
+                data={this.mapDataToLineChart(stationsAverageData, 'value')}
+                svg={{
+                  fill: 'grey',
+                  fontSize: 10,
+                }}
+                numberOfTicks={8}
+              />
             </View>
           )}
         </View>
@@ -150,5 +195,5 @@ const mapStateToProps = state => {
 
 export default connect(
   mapStateToProps,
-  {updateStationPMData},
+  {updateStationPMData, updateInsightBarChartData},
 )(Insight);

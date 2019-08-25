@@ -109,3 +109,15 @@ export const fetchComplaints = async callback => {
     callback(response.data);
   }
 };
+
+export const fetchAllLocationPmData = async callback => {
+  const response = await axios
+    .get(`${SERVER_URL}/locations`)
+    .then(resp => resp)
+    .catch(err => {
+      console.log('error on /locations', err);
+    });
+  if (response.status === 200 && response.data.length > 0) {
+    callback(response.data);
+  }
+};
